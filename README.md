@@ -29,3 +29,13 @@ What *is* reachable: raw accelerometer at ~50 Hz (`CMMotionManager`), heart rate
 1. **Walch 2019 sleep staging** — open PhysioNet dataset (`sleep-accel`), Apple Watch accel + HR, PSG labels. Only row that is both OPEN data and HIGH feasibility.
 2. **Esmaeilpour 2024 respiratory infection** — Fitbit in the paper, but all four inputs are HealthKit types. Anomaly detection on nocturnal RHR/RR/HRV, no labels needed to run the detector. Note the honest weakness: PPV 4–10%, most alerts are stress.
 3. **Sleep apnea** — you can read Apple's shipped breathing-disturbance metric *and* try to beat it on open PSG data (MESA, SHHS).
+
+# Copy this file to .env and fill in real values.
+# NEVER commit .env — it contains a live credential.
+
+# Pulsoid API token. Create at https://pulsoid.net/ui/keys
+# Requires a BRO subscription.
+PULSOID_TOKEN=
+
+# SQLite file path. Local only, gitignored.
+DB_PATH=./data/hr.db
