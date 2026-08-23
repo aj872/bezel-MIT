@@ -23,7 +23,6 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@pulsoid/socket": "^3.0.0",
     "better-sqlite3": "^13.0.3",
     "dotenv": "^17.4.2"
   },
