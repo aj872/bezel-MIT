@@ -1,0 +1,639 @@
+<title>bezel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f2f4f6; --panel:#fbfcfd; --line:#dde3e9; --line-soft:#e9eef2;
+  --ink:#0f1519; --ink-2:#4a5964; --ink-3:#8697a3;
+  --cadence:#2a78d6; --hr:#e34948; --dhr:#4a3aa7; --stress:#eb6834;
+  --ok:#1baf7a; --warn:#eda100;
+  --b-onset:rgba(235,104,52,.17); --b-sust:rgba(237,161,0,.13);
+  --b-move:rgba(42,120,214,.11); --b-neg:rgba(27,175,122,.12);
+  --b-rec:rgba(134,151,163,.09);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#0d1114; --panel:#141a1f; --line:#26313a; --line-soft:#1d252c;
+  --ink:#eef3f6; --ink-2:#9fb0bc; --ink-3:#687986;
+  --cadence:#3987e5; --hr:#e66767; --dhr:#9085e9; --stress:#d95926;
+  --ok:#199e70; --warn:#c98500;
+  --b-onset:rgba(217,89,38,.22); --b-sust:rgba(201,133,0,.16);
+  --b-move:rgba(57,135,229,.15); --b-neg:rgba(25,158,112,.16);
+  --b-rec:rgba(104,121,134,.12);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0d1114; --panel:#141a1f; --line:#26313a; --line-soft:#1d252c;
+  --ink:#eef3f6; --ink-2:#9fb0bc; --ink-3:#687986;
+  --cadence:#3987e5; --hr:#e66767; --dhr:#9085e9; --stress:#d95926;
+  --ok:#199e70; --warn:#c98500;
+  --b-onset:rgba(217,89,38,.22); --b-sust:rgba(201,133,0,.16);
+  --b-move:rgba(57,135,229,.15); --b-neg:rgba(25,158,112,.16);
+  --b-rec:rgba(104,121,134,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:400 15px/1.55 "IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1500px;margin:0 auto;padding:28px 24px 64px}
+h1{
+  font:700 clamp(23px,3.1vw,33px)/1.12 "IBM Plex Sans Condensed","IBM Plex Sans",sans-serif;
+  margin:0 0 7px;letter-spacing:-.014em;text-wrap:balance;
+}
+.sub{color:var(--ink-2);margin:0;font-size:14.5px;max-width:74ch}
+.eyebrow{
+  font:600 11px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 11px;
+}
+
+/* readout strip -- summary before detail */
+.readout{
+  display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  border-radius:3px;overflow:hidden;margin:26px 0 22px;
+}
+.cell{background:var(--panel);padding:13px 15px 14px}
+.cell .k{
+  font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+.cell .v{
+  font:600 27px/1.05 "IBM Plex Sans Condensed",sans-serif;margin-top:7px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+}
+.cell .u{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:3px}
+.cell .n{font-size:11.5px;color:var(--ink-3);margin-top:3px;font-weight:500}
+
+/* controls */
+.bar{
+  display:flex;flex-wrap:wrap;gap:11px 26px;align-items:flex-end;
+  background:var(--panel);border:1px solid var(--line);border-radius:3px;
+  padding:14px 17px;margin-bottom:8px;
+}
+.ctl{display:flex;flex-direction:column;gap:5px;min-width:212px}
+.ctl label{
+  font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);
+  display:flex;justify-content:space-between;gap:12px;
+}
+.ctl label b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--stress);height:18px;margin:0}
+input[type=range]:focus-visible{outline:2px solid var(--stress);outline-offset:3px}
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+button{
+  font:500 12px/1 "IBM Plex Sans",sans-serif;color:var(--ink-2);
+  background:var(--bg);border:1px solid var(--line);border-radius:3px;
+  padding:7px 11px;cursor:pointer;transition:.13s border-color,.13s color;
+}
+button:hover{border-color:var(--ink-3);color:var(--ink)}
+button:focus-visible{outline:2px solid var(--stress);outline-offset:2px}
+button.on{border-color:var(--stress);color:var(--stress)}
+
+.playbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 13px}
+button.play{
+  font:600 12.5px/1 "IBM Plex Sans",sans-serif;color:var(--panel);
+  background:var(--stress);border-color:var(--stress);padding:9px 16px;min-width:98px;
+}
+button.play:hover{color:var(--panel);border-color:var(--stress);filter:brightness(1.08)}
+.speeds{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.speeds button{border:0;border-radius:0;border-left:1px solid var(--line);padding:8px 12px;
+  font:500 12px/1 "IBM Plex Mono",monospace}
+.speeds button:first-child{border-left:0}
+.speeds button.on{background:var(--stress);color:var(--panel)}
+.clock{
+  font:500 13px/1 "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+  color:var(--ink-2);display:flex;gap:15px;align-items:center;
+}
+.clock b{color:var(--ink);font-weight:600}
+.clock .t{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.clock .live{color:var(--stress);font-weight:600}
+.hint{font-size:12.5px;color:var(--ink-3);margin:0 0 18px}
+.hint kbd{
+  font:500 11px "IBM Plex Mono",monospace;background:var(--panel);
+  border:1px solid var(--line);border-radius:3px;padding:1px 5px;
+}
+
+/* trace stack */
+.stack{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--panel)}
+.pan{position:relative;border-bottom:1px solid var(--line-soft)}
+.pan:last-child{border-bottom:0}
+.pan canvas{display:block;width:100%;height:100%;position:absolute;inset:0}
+.pan .base{position:relative}
+.ph{
+  position:absolute;top:9px;left:13px;z-index:3;pointer-events:none;
+  font:600 12px/1.25 "IBM Plex Sans Condensed",sans-serif;letter-spacing:.005em;
+}
+.ph em{font-style:normal;font-weight:500;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif}
+#tip{
+  position:fixed;z-index:40;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--panel);border:1px solid var(--line);border-radius:3px;
+  padding:9px 11px;font:500 12px/1.62 "IBM Plex Mono",monospace;
+  font-variant-numeric:tabular-nums;box-shadow:0 6px 22px rgba(0,0,0,.16);
+  min-width:196px;
+}
+#tip .tt{font-weight:600;font-size:12.5px;color:var(--ink);margin-bottom:5px}
+#tip .r{display:flex;justify-content:space-between;gap:16px;color:var(--ink-2)}
+#tip .r b{color:var(--ink);font-weight:600}
+#tip .vd{margin-top:6px;padding-top:5px;border-top:1px solid var(--line);font-weight:600}
+
+.legend{display:flex;flex-wrap:wrap;gap:7px 18px;margin:14px 0 0;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:flex;align-items:center;gap:7px}
+.sw{width:19px;height:10px;border-radius:2px;flex:none}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:9px}
+th{
+  text-align:left;font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);padding:0 12px 9px;border-bottom:1px solid var(--line);
+}
+th.n,td.n{text-align:right}
+td{padding:9px 12px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:0}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--bg)}
+.tag{
+  display:inline-block;font:600 10.5px/1 "IBM Plex Mono",monospace;
+  padding:4px 7px;border-radius:2px;letter-spacing:.05em;
+}
+.grid2{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;margin-top:34px;align-items:start}
+@media (max-width:940px){.grid2{grid-template-columns:1fr}.jump{margin-left:0}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:16px 17px 6px}
+.card h2{font:600 14px/1.2 "IBM Plex Sans Condensed",sans-serif;margin:0 0 3px}
+.card p{margin:0 0 10px;font-size:12.5px;color:var(--ink-2)}
+.card p:last-of-type{margin-bottom:14px}
+.formula{
+  font:500 13px/1.85 "IBM Plex Mono",monospace;background:var(--bg);
+  border:1px solid var(--line);border-radius:3px;padding:12px 14px;margin:0 0 14px;
+  color:var(--ink-2);overflow-x:auto;
+}
+.formula b{color:var(--ink);font-weight:600}
+.note{font-size:12.5px;color:var(--ink-2);margin:0 0 11px;padding-left:12px;border-left:2px solid var(--line)}
+.note b{color:var(--ink);font-weight:600}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <h1>bezel</h1>
+
+  <div class="readout" id="readout"></div>
+
+  <div class="bar">
+    <div class="ctl">
+      <label for="a">&alpha; &middot; stillness gate (cadence &lt; &alpha;) <b><span id="av"></span> steps/min</b></label>
+      <input type="range" id="a" min="0" max="220" step="1">
+    </div>
+    <div class="ctl">
+      <label for="b">&beta; &middot; HR climb <b><span id="bv"></span> bpm/min</b></label>
+      <input type="range" id="b" min="1" max="16" step="0.5">
+    </div>
+    <div class="ctl" style="min-width:170px">
+      <label for="d">debounce <b><span id="dv"></span></b></label>
+      <input type="range" id="d" min="1" max="8" step="1">
+    </div>
+    <div class="jump" id="jump"></div>
+  </div>
+  <div class="playbar">
+    <button class="play" id="play">&#9654;&nbsp; Play</button>
+    <div class="speeds" id="speeds"></div>
+    <div class="clock" id="clock"></div>
+  </div>
+  <p class="hint">Drag across any trace to zoom &middot; <kbd>double-click</kbd> to reset &middot; hover for a readout</p>
+
+  <div class="stack" id="stack"></div>
+  <div class="legend" id="legend"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Detected episodes</h2>
+      <p>Contiguous firings, merged across gaps under a minute. Click a row to zoom to it.</p>
+      <table><thead><tr>
+        <th>start</th><th>duration</th><th class="n">peak score</th>
+        <th class="n">peak dHR/dt</th><th>ground truth</th>
+      </tr></thead><tbody id="eps"></tbody></table>
+    </div>
+    <div class="card">
+      <h2>The rule</h2>
+      <div class="formula">
+        S = cumulative steps, so <b>dS/dt is cadence</b><br><br>
+        if  <b>dS/dt &lt; &alpha;</b>   &nbsp;you are not moving<br>
+        and <b>dHR/dt &gt; &beta;</b>   &nbsp;but HR is climbing<br>
+        &rarr; movement cannot explain it<br>
+        &rarr; <b>stress score &prop; dHR/dt</b>
+      </div>
+</div>
+  </div>
+</div>
+<div id="tip"></div>
+
+<script>/*__DATA__*/</script>
+<script>
+"use strict";
+const D = window.DAY, N = D.n;
+const KINDS = {
+  stress_onset:{c:"--b-onset", l:"stress onset"},
+  stress_sustained:{c:"--b-sust", l:"stress sustained"},
+  activity:{c:"--b-move", l:"moving"},
+  negative_control:{c:"--b-neg", l:"negative control"},
+  recovery:{c:"--b-rec", l:"recovery"},
+};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const clamp = (v,a,b) => v<a?a:v>b?b:v;
+const hhmm = i => {
+  const s = 7*3600 + i*D.dt, h=(s/3600)|0, m=((s%3600)/60)|0, ss=s%60;
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+};
+
+// ---- detection, re-run on every parameter change -------------------------
+let P = {...D.defaults};
+let R = null;
+function detect(){
+  const {alpha,beta,scale,debounce} = P;
+  const raw = new Uint8Array(N), fired = new Uint8Array(N), score = new Float32Array(N);
+  for (let i=0;i<N;i++)
+    raw[i] = (D.valid[i] && D.cad[i] < alpha && D.dhr[i] > beta) ? 1 : 0;
+  for (let i=0;i<N;i++){
+    let ok = raw[i];
+    for (let k=1;k<debounce && ok;k++) ok = (i-k>=0) ? raw[i-k] : 0;
+    fired[i] = ok;
+  }
+  const f2 = fired.slice();
+  for (let i=0;i<N;i++)
+    for (let k=1;k<debounce;k++) if (i+k<N && fired[i+k]) f2[i]=1;
+  for (let i=0;i<N;i++) score[i] = f2[i] ? clamp(D.dhr[i]/scale*100,0,100) : 0;
+
+  // episodes, merged across gaps < 6 samples
+  const eps=[]; let st=-1, last=-1;
+  for (let i=0;i<N;i++){
+    if (f2[i]){ if(st<0) st=i; last=i; }
+    else if (st>=0 && i-last>6){ eps.push([st,last]); st=-1; }
+  }
+  if (st>=0) eps.push([st,last]);
+
+  // scoring vs ground truth (stress_sustained is excluded -- a derivative
+  // detector structurally cannot see elevated-but-flat)
+  const kind = new Array(N).fill("baseline");
+  for (const e of D.events) for (let i=e.s;i<e.e && i<N;i++) kind[i]=e.k;
+  let tp=0,fp=0,fn=0;
+  for (let i=0;i<N;i++){
+    if (kind[i]==="stress_sustained") continue;
+    const truth = kind[i]==="stress_onset";
+    if (f2[i] && truth) tp++; else if (f2[i]) fp++; else if (truth) fn++;
+  }
+  const prec = tp+fp ? tp/(tp+fp) : NaN, rec = tp+fn ? tp/(tp+fn) : NaN;
+  const hits = D.events.filter(e=>e.k==="stress_onset")
+    .filter(e=>{for(let i=e.s;i<e.e;i++) if(f2[i]) return true; return false;}).length;
+  const nOnset = D.events.filter(e=>e.k==="stress_onset").length;
+  let load=0; for(let i=0;i<N;i++) load += score[i];
+  let fpMove=0; for(let i=0;i<N;i++) if(f2[i] && kind[i]==="activity") fpMove++;
+
+  R = {fired:f2, score, eps, kind, prec, rec,
+       f1: 2*prec*rec/(prec+rec), hits, nOnset,
+       load: load*D.dt/60, fpMove,
+       peak: score.reduce((a,b)=>Math.max(a,b),0)};
+}
+
+// ---- panels --------------------------------------------------------------
+let view = [0, N-1];
+const PANELS = [
+  {id:"cad", h:118, title:"dS/dt", sub:"cadence, iPhone steps",
+   unit:"steps/min", color:"--cadence"},
+  {id:"hr",  h:196, title:"Heart rate", sub:"Apple Watch, 10 s samples",
+   unit:"bpm", color:"--hr"},
+  {id:"dhr", h:172, title:"dHR/dt", sub:"60 s window",
+   unit:"bpm/min", color:"--dhr"},
+  {id:"sc",  h:152, title:"Stress score", sub:"\u221D dHR/dt, gated on stillness",
+   unit:"score", color:"--stress"},
+];
+const PAD = {l:56, r:14, t:30, b:22};
+const stack = document.getElementById("stack");
+for (const p of PANELS){
+  const d = document.createElement("div");
+  d.className = "pan"; d.style.height = p.h+"px";
+  d.innerHTML = `<div class="ph" style="color:var(${p.color})">${p.title}
+    <em>&nbsp;${p.sub}</em></div>
+    <canvas class="base" id="c-${p.id}"></canvas><canvas class="ov" id="o-${p.id}"></canvas>`;
+  stack.appendChild(d);
+  p.el=d; p.base=d.querySelector(".base"); p.ov=d.querySelector(".ov");
+}
+const dpr = () => Math.min(window.devicePixelRatio||1, 2);
+function fit(c,w,h){ const r=dpr(); c.width=w*r; c.height=h*r;
+  const x=c.getContext("2d"); x.setTransform(r,0,0,r,0,0); return x; }
+
+const viewInts = () => [Math.max(0,Math.floor(view[0])), Math.min(N-1,Math.ceil(view[1]))];
+const X = (i,w) => PAD.l + (i-view[0])/(view[1]-view[0]) * (w-PAD.l-PAD.r);
+const iAt = (px,w) => Math.round(view[0] + (px-PAD.l)/(w-PAD.l-PAD.r)*(view[1]-view[0]));
+
+let yLock=null;
+function yScale(p){
+  if(yLock && yLock[p.id]) return yLock[p.id];
+  const [a,b]=viewInts(); let lo=Infinity, hi=-Infinity;
+  const src = p.id==="cad"?D.cad : p.id==="hr"?D.hr : p.id==="dhr"?D.dhr : R.score;
+  for(let i=a;i<=b;i++){ const v=src[i]; if(v==null||isNaN(v))continue;
+    if(v<lo)lo=v; if(v>hi)hi=v; }
+  if(!isFinite(lo)){lo=0;hi=1;}
+  if(p.id==="cad"||p.id==="sc") lo=0;
+  if(p.id==="dhr"){
+    // keep the whole positive range, but stop the HR-recovery troughs from
+    // squashing it -- clip the floor to the 1st percentile of the view
+    const vs=[]; for(let i=a;i<=b;i++) if(D.dhr[i]!=null) vs.push(D.dhr[i]);
+    vs.sort((x,y)=>x-y);
+    lo=Math.min(vs[Math.floor(vs.length*0.01)]||lo, -P.beta*1.5);
+    hi=Math.max(hi, P.beta*2.2);
+  }
+  const pad=(hi-lo)*0.14||1; return [lo-(p.id==="cad"||p.id==="sc"?0:pad), hi+pad];
+}
+
+function drawBase(p){
+  const w=p.el.clientWidth, h=p.h, g=fit(p.base,w,h);
+  const iv=viewInts();
+  const [lo,hi]=yScale(p), Y=v => h-PAD.b-(v-lo)/(hi-lo)*(h-PAD.t-PAD.b);
+  g.clearRect(0,0,w,h);
+
+  // ground-truth bands
+  for(const e of D.events){
+    const K=KINDS[e.k]; if(!K) continue;
+    if(e.e<view[0]||e.s>view[1]) continue;
+    const x0=X(Math.max(e.s,view[0]),w), x1=X(Math.min(e.e,view[1]+1),w);
+    g.fillStyle=css(K.c); g.fillRect(x0,0,Math.max(x1-x0,0.6),h);
+  }
+  // grid + y labels
+  g.strokeStyle=css("--line-soft"); g.fillStyle=css("--ink-3");
+  g.font='500 10px "IBM Plex Mono",monospace'; g.textAlign="right"; g.lineWidth=1;
+  const ticks=4;
+  for(let k=0;k<=ticks;k++){
+    const v=lo+(hi-lo)*k/ticks, y=Math.round(Y(v))+0.5;
+    g.beginPath(); g.moveTo(PAD.l,y); g.lineTo(w-PAD.r,y); g.stroke();
+    g.fillText(Math.abs(v)>=100?v.toFixed(0):v.toFixed(Math.abs(hi-lo)<6?1:0), PAD.l-8, y+3.4);
+  }
+  const [a,b]=iv, col=css(p.color);
+
+  if(p.id==="cad"||p.id==="sc"){
+    const src = p.id==="cad"?D.cad:R.score;
+    g.beginPath(); g.moveTo(X(a,w),Y(0));
+    for(let i=a;i<=b;i++) g.lineTo(X(i,w),Y(src[i]||0));
+    g.lineTo(X(b,w),Y(0)); g.closePath();
+    g.fillStyle=col; g.globalAlpha=.85; g.fill(); g.globalAlpha=1;
+  }
+  if(p.id==="hr"){
+    g.strokeStyle=col; g.globalAlpha=.34; g.lineWidth=1;
+    g.beginPath(); let pen=false;
+    for(let i=a;i<=b;i++){ const v=D.hr[i];
+      if(v==null){pen=false;continue;} const x=X(i,w),y=Y(v);
+      pen?g.lineTo(x,y):g.moveTo(x,y); pen=true; }
+    g.stroke(); g.globalAlpha=1;
+    g.lineWidth=2; g.lineJoin="round"; g.beginPath(); pen=false;
+    for(let i=a;i<=b;i++){ const v=D.hrs[i];
+      if(v==null){pen=false;continue;} const x=X(i,w),y=Y(v);
+      pen?g.lineTo(x,y):g.moveTo(x,y); pen=true; }
+    g.stroke();
+    // dropouts: the detector abstains, say so
+    g.fillStyle=css("--ink-3"); g.globalAlpha=.22;
+    for(let i=a;i<=b;i++) if(!D.valid[i]) g.fillRect(X(i,w),PAD.t,Math.max(X(i+1,w)-X(i,w),1),h-PAD.t-PAD.b);
+    g.globalAlpha=1;
+  }
+  if(p.id==="dhr"){
+    const yb=Y(P.beta);
+    // what the movement gate throws away vs what it keeps
+    for(const [cond,color,alpha] of [
+        [i=>D.dhr[i]>P.beta && D.cad[i]>=P.alpha, css("--cadence"), .5],
+        [i=>R.fired[i], css("--stress"), .68]]){
+      g.fillStyle=color; g.globalAlpha=alpha; g.beginPath(); let pen=false;
+      for(let i=a;i<=b;i++){
+        if(cond(i)){ const x=X(i,w); if(!pen){g.moveTo(x,yb);pen=true;} g.lineTo(x,Y(D.dhr[i])); }
+        else if(pen){ g.lineTo(X(i-1,w),yb); g.closePath(); g.fill(); g.beginPath(); pen=false; }
+      }
+      if(pen){ g.lineTo(X(b,w),yb); g.closePath(); g.fill(); }
+      g.globalAlpha=1;
+    }
+    g.strokeStyle=css("--line"); g.lineWidth=1;
+    g.beginPath(); g.moveTo(PAD.l,Y(0)); g.lineTo(w-PAD.r,Y(0)); g.stroke();
+    g.strokeStyle=col; g.lineWidth=1.6; g.lineJoin="round"; g.beginPath();
+    for(let i=a;i<=b;i++){const x=X(i,w),y=Y(D.dhr[i]); i===a?g.moveTo(x,y):g.lineTo(x,y);}
+    g.stroke();
+    g.strokeStyle=css("--ink-2"); g.lineWidth=1.2; g.setLineDash([5,3]);
+    g.beginPath(); g.moveTo(PAD.l,yb); g.lineTo(w-PAD.r,yb); g.stroke(); g.setLineDash([]);
+    g.fillStyle=css("--ink-2"); g.textAlign="left";
+    g.font='600 10px "IBM Plex Mono",monospace';
+    g.fillText("\u03B2 "+P.beta, PAD.l+6, yb-5);
+  }
+  if(p.id==="cad" && P.alpha>0 && P.alpha<hi){
+    const y=Y(P.alpha);
+    g.strokeStyle=css("--ink-2"); g.lineWidth=1.2; g.setLineDash([5,3]);
+    g.beginPath(); g.moveTo(PAD.l,y); g.lineTo(w-PAD.r,y); g.stroke(); g.setLineDash([]);
+    g.fillStyle=css("--ink-2"); g.textAlign="left";
+    g.font='600 10px "IBM Plex Mono",monospace';
+    g.fillText("\u03B1 "+P.alpha, PAD.l+5, y-4);
+  }
+  // time axis on the last panel only
+  if(p===PANELS[PANELS.length-1]){
+    g.fillStyle=css("--ink-3"); g.textAlign="center";
+    g.font='500 10px "IBM Plex Mono",monospace';
+    const span=view[1]-view[0], step= span>1800?360 : span>600?180 : span>200?60 : 30;
+    for(let i=Math.ceil(view[0]/step)*step;i<=view[1];i+=step)
+      g.fillText(hhmm(i).slice(0,5), X(i,w), h-5);
+  }
+}
+function drawAll(){ for(const p of PANELS) drawBase(p); }
+
+// ---- crosshair -----------------------------------------------------------
+const tip=document.getElementById("tip");
+function drawOv(idx){
+  for(const p of PANELS){
+    const w=p.el.clientWidth,h=p.h,g=fit(p.ov,w,h); g.clearRect(0,0,w,h);
+    if(idx==null) continue;
+    const x=Math.round(X(idx,w))+0.5;
+    if(x<PAD.l||x>w-PAD.r) continue;
+    g.strokeStyle=css("--ink-3"); g.lineWidth=1; g.globalAlpha=.65;
+    g.beginPath(); g.moveTo(x,PAD.t-8); g.lineTo(x,h-PAD.b); g.stroke(); g.globalAlpha=1;
+    const [lo,hi]=yScale(p), Y=v=>h-PAD.b-(v-lo)/(hi-lo)*(h-PAD.t-PAD.b);
+    const v = p.id==="cad"?D.cad[idx] : p.id==="hr"?D.hrs[idx]
+            : p.id==="dhr"?D.dhr[idx] : R.score[idx];
+    if(v==null||isNaN(v)) continue;
+    g.fillStyle=css(p.color); g.strokeStyle=css("--panel"); g.lineWidth=2;
+    g.beginPath(); g.arc(x,Y(v),4.5,0,7); g.fill(); g.stroke();
+  }
+}
+function showTip(idx,cx,cy){
+  const ev = D.events.find(e=>idx>=e.s&&idx<e.e);
+  const fired = R.fired[idx];
+  const verdict = !D.valid[idx] ? ["watch dropout \u2014 abstains","--ink-3"]
+    : fired ? [`STRESS \u00B7 score ${R.score[idx].toFixed(0)}`,"--stress"]
+    : D.cad[idx]>=P.alpha ? ["moving \u2014 movement explains it","--cadence"]
+    : ["calm","--ink-3"];
+  tip.innerHTML =
+    `<div class="tt">${hhmm(idx)}</div>`+
+    `<div class="r"><span>cadence</span><b>${D.cad[idx].toFixed(0)} spm</b></div>`+
+    `<div class="r"><span>heart rate</span><b>${D.hr[idx]==null?"\u2014":D.hr[idx].toFixed(0)+" bpm"}</b></div>`+
+    `<div class="r"><span>dHR/dt</span><b>${D.dhr[idx]>=0?"+":""}${D.dhr[idx].toFixed(1)} bpm/min</b></div>`+
+    (ev&&KINDS[ev.k]?`<div class="r"><span>truth</span><b>${KINDS[ev.k].l}</b></div>`:"")+
+    `<div class="vd" style="color:var(${verdict[1]})">${verdict[0]}</div>`;
+  tip.style.opacity=1;
+  const r=tip.getBoundingClientRect();
+  tip.style.left = Math.min(cx+16, innerWidth-r.width-10)+"px";
+  tip.style.top  = clamp(cy-r.height/2, 10, innerHeight-r.height-10)+"px";
+}
+
+// ---- interaction ---------------------------------------------------------
+let drag=null;
+stack.addEventListener("pointermove", ev=>{
+  if(play.on) return;
+  const p=PANELS[0], w=p.el.clientWidth;
+  const px = ev.clientX - stack.getBoundingClientRect().left;
+  const idx = clamp(iAt(px,w), 0, N-1);
+  if(drag){ drag.b=idx; drawOv(idx); drawSel(); return; }
+  drawOv(idx); showTip(idx,ev.clientX,ev.clientY);
+});
+stack.addEventListener("pointerleave", ()=>{ if(!drag){drawOv(null); tip.style.opacity=0;} });
+stack.addEventListener("pointerdown", ev=>{
+  if(play.on) return;
+  const w=PANELS[0].el.clientWidth;
+  const px=ev.clientX-stack.getBoundingClientRect().left;
+  drag={a:clamp(iAt(px,w),0,N-1),b:null}; tip.style.opacity=0;
+  stack.setPointerCapture(ev.pointerId);
+});
+stack.addEventListener("pointerup", ()=>{
+  if(drag&&drag.b!=null&&Math.abs(drag.b-drag.a)>4){
+    view=[Math.min(drag.a,drag.b),Math.max(drag.a,drag.b)]; yLock=null; drawAll();
+  }
+  drag=null; drawOv(null); markJump();
+});
+stack.addEventListener("dblclick", ()=>{ setPlay(false); view=[0,N-1]; yLock=null; drawAll(); drawOv(null); markJump(); });
+function drawSel(){
+  if(!drag||drag.b==null) return;
+  for(const p of PANELS){
+    const w=p.el.clientWidth,h=p.h,g=p.ov.getContext("2d");
+    const x0=X(Math.min(drag.a,drag.b),w), x1=X(Math.max(drag.a,drag.b),w);
+    g.fillStyle=css("--ink-3"); g.globalAlpha=.16; g.fillRect(x0,0,x1-x0,h); g.globalAlpha=1;
+  }
+}
+
+// ---- readout, table, jump buttons ---------------------------------------
+function render(){
+  detect();
+  document.getElementById("readout").innerHTML = [
+    ["stress load", R.load.toFixed(0), "score\u00B7min", "integral of the score"],
+    ["episodes", R.eps.length, "", "merged firings"],
+    ["events caught", `${R.hits}/${R.nOnset}`, "", "labelled stress onsets"],
+    ["precision", isNaN(R.prec)?"\u2014":R.prec.toFixed(3), "", `${R.fpMove} false positives while moving`],
+    ["recall", isNaN(R.rec)?"\u2014":R.rec.toFixed(3), "", "of onset samples"],
+    ["peak score", R.peak.toFixed(0), "", "sharpest climb of the day"],
+  ].map(([k,v,u,n])=>
+    `<div class="cell"><div class="k">${k}</div><div class="v">${v}${u?`<span class="u">${u}</span>`:""}</div><div class="n">${n}</div></div>`
+  ).join("");
+
+  document.getElementById("eps").innerHTML = R.eps.length ? R.eps.map(([s,e])=>{
+    let pk=0,pd=0; for(let i=s;i<=e;i++){ if(R.score[i]>pk)pk=R.score[i]; if(D.dhr[i]>pd)pd=D.dhr[i]; }
+    const mid=(s+e)>>1, ev=D.events.find(x=>mid>=x.s&&mid<x.e) || D.events.find(x=>s>=x.s&&s<x.e);
+    const good = ev && ev.k.startsWith("stress");
+    return `<tr data-s="${s}" data-e="${e}"><td>${hhmm(s)}</td>
+      <td>${((e-s+1)*D.dt/60).toFixed(1)} min</td><td class="n"><b>${pk.toFixed(0)}</b></td>
+      <td class="n">${pd.toFixed(1)}</td>
+      <td><span class="tag" style="background:var(${good?"--b-onset":"--b-rec"});color:var(${good?"--stress":"--ink-2"})">${ev&&KINDS[ev.k]?KINDS[ev.k].l:"\u2014"}</span></td></tr>`;
+  }).join("") : `<tr><td colspan="5" style="color:var(--ink-3)">no episodes at these thresholds</td></tr>`;
+
+  document.querySelectorAll("#eps tr[data-s]").forEach(tr=>tr.onclick=()=>{
+    const s=+tr.dataset.s, e=+tr.dataset.e, pad=Math.max(30,(e-s));
+    setPlay(false); view=[Math.max(0,s-pad),Math.min(N-1,e+pad)]; yLock=null; drawAll(); drawOv(null); markJump();
+  });
+  drawAll();
+}
+
+const JUMPS=[["Whole day",0,N-1],["Run",108,205],["09:30",880,1000],
+             ["11:01",1400,1730],["13:35",2320,2420],["14:15",2570,2700]];
+document.getElementById("jump").innerHTML =
+  JUMPS.map(([l],i)=>`<button data-j="${i}">${l}</button>`).join("");
+function markJump(){
+  document.querySelectorAll("#jump button").forEach(b=>{
+    const [,a,z]=JUMPS[+b.dataset.j];
+    b.classList.toggle("on", view[0]===a && view[1]===z);
+  });
+}
+document.querySelectorAll("#jump button").forEach(b=>b.onclick=()=>{
+  const [,a,z]=JUMPS[+b.dataset.j]; setPlay(false); view=[a,z]; yLock=null; drawAll(); drawOv(null); markJump();
+});
+
+document.getElementById("legend").innerHTML =
+  Object.entries(KINDS).map(([k,v])=>
+    `<span><i class="sw" style="background:var(${v.c})"></i>${v.l}</span>`).join("")+
+  `<span><i class="sw" style="background:var(--stress)"></i>detected stress</span>`+
+  `<span><i class="sw" style="background:var(--cadence)"></i>climbing, but moving</span>`;
+
+for(const [id,key,fmt] of [["a","alpha",v=>v],["b","beta",v=>v],["d","debounce",v=>v]]){
+  const el=document.getElementById(id), out=document.getElementById(id+"v");
+  el.value=P[key]; out.textContent=fmt(P[key]);
+  el.addEventListener("input",()=>{ P[key]=+el.value; out.textContent=fmt(+el.value); render(); });
+}
+
+
+// ---- playback ------------------------------------------------------------
+const SPEEDS=[1,10,60,240], WIN=120;      // WIN = 20 min visible while rolling
+let play={on:false, speed:60, ph:0, last:0};
+
+function lockScales(){
+  // freeze the y-scales to the whole day, so a scrolling window does not make
+  // the axes jump under the trace while it plays
+  const save=view; view=[0,N-1]; yLock=null;
+  const m={}; for(const p of PANELS) m[p.id]=yScale(p);
+  view=save; yLock=m;
+}
+function drawPlayhead(){
+  const i=clamp(Math.round(play.ph),0,N-1);
+  for(const p of PANELS){
+    const w=p.el.clientWidth,h=p.h,g=fit(p.ov,w,h); g.clearRect(0,0,w,h);
+    const x=X(play.ph,w); if(x<PAD.l||x>w-PAD.r) continue;
+    g.strokeStyle=css("--stress"); g.lineWidth=1.5; g.globalAlpha=.9;
+    g.beginPath(); g.moveTo(x,PAD.t-10); g.lineTo(x,h-PAD.b); g.stroke(); g.globalAlpha=1;
+    const [lo,hi]=yScale(p), Y=v=>h-PAD.b-(v-lo)/(hi-lo)*(h-PAD.t-PAD.b);
+    const v = p.id==="cad"?D.cad[i] : p.id==="hr"?D.hrs[i]
+            : p.id==="dhr"?D.dhr[i] : R.score[i];
+    if(v==null||isNaN(v)) continue;
+    g.fillStyle=css(p.color); g.strokeStyle=css("--panel"); g.lineWidth=2;
+    g.beginPath(); g.arc(x,Y(v),4.5,0,7); g.fill(); g.stroke();
+  }
+}
+function updateClock(){
+  const i=clamp(Math.round(play.ph),0,N-1);
+  document.getElementById("clock").innerHTML =
+    `<span class="t">${hhmm(i)}</span>`+
+    `<span>${D.cad[i].toFixed(0)}<b> spm</b></span>`+
+    `<span>${D.hr[i]==null?"\u2014":D.hr[i].toFixed(0)}<b> bpm</b></span>`+
+    `<span>${D.dhr[i]>=0?"+":""}${D.dhr[i].toFixed(1)}<b> bpm/min</b></span>`+
+    (R.fired[i]?`<span class="live">STRESS ${R.score[i].toFixed(0)}</span>`
+     :!D.valid[i]?`<span style="color:var(--ink-3)">dropout</span>`:"");
+}
+function tick(ts){
+  if(!play.on) return;
+  if(!play.last) play.last=ts;
+  const dt=Math.min((ts-play.last)/1000, 0.25); play.last=ts;
+  play.ph += dt*play.speed/D.dt;
+  if(play.ph>=N-1){ play.ph=N-1; setPlay(false); drawAll(); drawPlayhead(); updateClock(); return; }
+  let a=play.ph-WIN*0.78, b=play.ph+WIN*0.22;
+  if(a<0){a=0;b=WIN;} if(b>N-1){b=N-1;a=N-1-WIN;}
+  view=[a,b];
+  drawAll(); drawPlayhead(); updateClock();
+  requestAnimationFrame(tick);
+}
+function setPlay(on){
+  play.on=on;
+  const btn=document.getElementById("play");
+  btn.innerHTML = on ? "&#10073;&#10073;&nbsp; Pause" : "&#9654;&nbsp; Play";
+  if(on){
+    if(play.ph>=N-1) play.ph=0;
+    lockScales(); play.last=0; requestAnimationFrame(tick);
+  }
+}
+document.getElementById("play").onclick = ()=>setPlay(!play.on);
+document.getElementById("speeds").innerHTML =
+  SPEEDS.map(v=>`<button data-s="${v}" class="${v===play.speed?"on":""}">${v}&times;</button>`).join("");
+document.querySelectorAll("#speeds button").forEach(b=>b.onclick=()=>{
+  play.speed=+b.dataset.s;
+  document.querySelectorAll("#speeds button").forEach(x=>x.classList.toggle("on",x===b));
+});
+
+addEventListener("resize", drawAll);
+matchMedia("(prefers-color-scheme:dark)").addEventListener("change", drawAll);
+render(); markJump(); updateClock();
+</script>
