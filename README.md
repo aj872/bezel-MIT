@@ -30,12 +30,14 @@ What *is* reachable: raw accelerometer at ~50 Hz (`CMMotionManager`), heart rate
 2. **Esmaeilpour 2024 respiratory infection** — Fitbit in the paper, but all four inputs are HealthKit types. Anomaly detection on nocturnal RHR/RR/HRV, no labels needed to run the detector. Note the honest weakness: PPV 4–10%, most alerts are stress.
 3. **Sleep apnea** — you can read Apple's shipped breathing-disturbance metric *and* try to beat it on open PSG data (MESA, SHHS).
 
-# Copy this file to .env and fill in real values.
-# NEVER commit .env — it contains a live credential.
+## Local setup
 
-# Pulsoid API token. Create at https://pulsoid.net/ui/keys
-# Requires a BRO subscription.
-PULSOID_TOKEN=
+Requires Node 22+.
 
-# SQLite file path. Local only, gitignored.
-DB_PATH=./data/hr.db
+1. `npm i`
+2. `cp .env.example .env`
+3. Add your Pulsoid token to `.env` (create one at https://pulsoid.net/ui/keys)
+4. `npm run dev`
+
+`better-sqlite3` is a native module. If you see a Node ABI mismatch,
+run `npm rebuild better-sqlite3`.
