@@ -1,2 +1,12 @@
+node_modules/
+dist/
+.env
+*.db
+*.db-journal
+*.jsonl
 __pycache__/
 *.pyc
+
+# Live capture lands in data/ as .jsonl/.db and is ignored by the patterns
+# above. The synthetic CSVs in data/ are checked in on purpose -- they are the
+# validation set, not runtime output.

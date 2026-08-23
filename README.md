@@ -2,6 +2,15 @@
 
 Sundai Hack 137 (AI 4 Next Gen Medicine).
 
+Two tracks in this repo:
+
+- **Live ingestion** — `src/`, `backend/`, `frontend/`: Pulsoid heart-rate stream into SQLite,
+  with a React front end. See [Local setup](#local-setup) and `mvp.md`.
+- **Detector + validation set** — `generate_day.py`, `stress_detect.py`, `visualize.py`: the
+  synthetic labelled day the stress algorithm is developed and scored against. Everything below.
+
+---
+
 **Isolate the heart-rate change that physical activity cannot explain, and call that stress.**
 
 Two signals, synced to a common 10-second grid: iPhone step counts and Apple Watch heart rate.
@@ -147,11 +156,6 @@ build_viewer.py     viewer/_template.html + data.js  →  viewer/stress_viewer.h
 | `stress_timeline.csv` | per-sample derivatives, gate state, score |
 | `stress_episodes.csv` | merged firings |
 
-```bash
-python generate_day.py && python stress_detect.py && python visualize.py
-python build_viewer.py     # rebuild the interactive page
-```
-
 `generate_day.py` asserts its own output (2,880 samples, uniform raster, no negative steps, HR in
 40–200). `stress_detect.py` prints the confusion matrix and per-kind firing counts. The viewer's
 JavaScript detector was cross-checked against the Python one — identical firing indices, identical
@@ -174,3 +178,34 @@ including `appleSleepingBreathingDisturbances` and AFib History burden.
 Notably, Esmaeilpour 2024 (respiratory infection from nocturnal wearable physiology) reports that
 **63.6% of its alerts traced to stress**, exercise, or poor sleep rather than infection — which is
 roughly the argument for measuring stress directly.
+
+## Current ranking for a one-day build
+
+1. **Walch 2019 sleep staging** — open PhysioNet dataset (`sleep-accel`), Apple Watch accel + HR,
+   PSG labels. Only row that is both OPEN data and HIGH feasibility.
+2. **Esmaeilpour 2024 respiratory infection** — Fitbit in the paper, but all four inputs are
+   HealthKit types. Anomaly detection on nocturnal RHR/RR/HRV, no labels needed to run the
+   detector. Note the honest weakness: PPV 4–10%, most alerts are stress.
+3. **Sleep apnea** — you can read Apple's shipped breathing-disturbance metric *and* try to beat
+   it on open PSG data (MESA, SHHS).
+
+---
+
+## Local setup
+
+### Live ingestion (Node 22+)
+
+1. `npm i`
+2. `cp .env.example .env`
+3. Add your Pulsoid token to `.env` (create one at https://pulsoid.net/ui/keys)
+4. `npm run dev`
+
+`better-sqlite3` is a native module. If you see a Node ABI mismatch, run
+`npm rebuild better-sqlite3`.
+
+### Detector + figures (Python 3.11, numpy/pandas/scipy/matplotlib)
+
+```bash
+python generate_day.py && python stress_detect.py && python visualize.py
+python build_viewer.py     # rebuild the interactive page
+```
