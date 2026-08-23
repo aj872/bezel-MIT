@@ -4,7 +4,8 @@
   "description": "Literature seed for the Sundai Hack 137 (AI 4 Next Gen Medicine) project: find a wearable-data paper that predicts a real health outcome, and actually implement it end to end on an Apple Watch.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && cp src/db/schema.sql dist/db/schema.sql"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,6 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@pulsoid/socket": "^3.0.0",
     "better-sqlite3": "^13.0.3",
     "dotenv": "^17.4.2"
   },
