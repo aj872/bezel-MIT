@@ -1,0 +1,48 @@
+{
+  "beta": 7.99,
+  "beta_sigma": 3.3,
+  "alpha": 10.0,
+  "scale": 25.0,
+  "debounce": 2,
+  "noise_floor": {
+    "median": 0.1464374979978073,
+    "sigma": 2.375413827328842,
+    "beta": 7.99
+  },
+  "real": {
+    "n": 1253,
+    "hours": 3.48,
+    "dropout_pct": 18.5,
+    "abstain_pct": 12.1,
+    "episodes": 5,
+    "load": 153.3,
+    "minutes_flagged": 3.2,
+    "resting_bpm": 60.5,
+    "median_bpm": 67.1,
+    "peak_bpm": 92.9,
+    "reserve_used_pct": 23.5
+  },
+  "walk": {
+    "n": 1253,
+    "steps": 10104,
+    "walk_minutes": 97.7,
+    "episodes": 5,
+    "load": 241.6,
+    "load_ungated": 999.0,
+    "episodes_ungated": 10,
+    "tp": 30,
+    "fp": 3,
+    "fn": 12,
+    "precision": 0.909,
+    "recall": 0.714,
+    "f1": 0.8,
+    "fp_while_walking": 1,
+    "fp_negative_control": 0,
+    "onsets": 4,
+    "onsets_hit": 4,
+    "resting_bpm": 64.1,
+    "median_bpm": 85.3,
+    "peak_bpm": 115.6,
+    "reserve_used_pct": 38.5
+  }
+}
