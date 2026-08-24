@@ -1,0 +1,27 @@
+start,end,kind,label
+2026-08-23 16:09:30,2026-08-23 16:21:30,baseline,"seated, settling"
+2026-08-23 16:21:30,2026-08-23 16:23:10,stress_onset,inbox opens
+2026-08-23 16:23:10,2026-08-23 16:25:00,stress_sustained,inbox opens
+2026-08-23 16:25:00,2026-08-23 16:31:30,recovery,coming down
+2026-08-23 16:31:30,2026-08-23 16:57:30,activity,"walk, steady"
+2026-08-23 16:57:30,2026-08-23 17:06:30,recovery,sat down
+2026-08-23 17:06:30,2026-08-23 17:08:20,stress_onset,phone call
+2026-08-23 17:08:20,2026-08-23 17:10:30,stress_sustained,phone call
+2026-08-23 17:10:30,2026-08-23 17:16:30,recovery,coming down
+2026-08-23 17:16:30,2026-08-23 17:45:30,activity,"walk, brisk"
+2026-08-23 17:45:30,2026-08-23 17:53:30,negative_control,"standing, shifting"
+2026-08-23 17:53:30,2026-08-23 18:01:30,baseline,seated
+2026-08-23 18:01:30,2026-08-23 18:03:20,stress_onset,deadline lands
+2026-08-23 18:03:20,2026-08-23 18:05:00,stress_sustained,deadline lands
+2026-08-23 18:05:00,2026-08-23 18:13:30,recovery,coming down
+2026-08-23 18:13:30,2026-08-23 18:27:30,activity,"walk, flat"
+2026-08-23 18:27:30,2026-08-23 18:35:30,activity,"walk, uphill"
+2026-08-23 18:35:30,2026-08-23 18:41:30,activity,"walk, over the top"
+2026-08-23 18:41:30,2026-08-23 18:51:30,recovery,sat down
+2026-08-23 18:51:30,2026-08-23 18:54:30,negative_control,stairs
+2026-08-23 18:54:30,2026-08-23 19:03:30,recovery,coming down
+2026-08-23 19:03:30,2026-08-23 19:17:30,activity,"walk, home"
+2026-08-23 19:17:30,2026-08-23 19:25:30,baseline,seated
+2026-08-23 19:25:30,2026-08-23 19:27:10,stress_onset,one more email
+2026-08-23 19:27:10,2026-08-23 19:29:00,stress_sustained,one more email
+2026-08-23 19:29:00,2026-08-23 19:38:10,recovery,coming down

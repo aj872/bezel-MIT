@@ -32,9 +32,14 @@ def human(nbytes):
 
 def main():
     if DOCS.exists():
-        shutil.rmtree(DOCS)
-    (DOCS / "data").mkdir(parents=True)
-    (DOCS / "figures").mkdir()
+        # docs/real/ is a second, independent site built by realviz/build.py.
+        # Wipe only what this builder owns, or a rebuild here silently deletes it.
+        for child in DOCS.iterdir():
+            if child.name == "real":
+                continue
+            shutil.rmtree(child) if child.is_dir() else child.unlink()
+    (DOCS / "data").mkdir(parents=True, exist_ok=True)
+    (DOCS / "figures").mkdir(exist_ok=True)
     (DOCS / ".nojekyll").write_text("")
 
     for name, *_ in FILES:
@@ -159,6 +164,7 @@ a{{color:var(--accent)}}
   <div class="cta">
     <a class="primary" href="viewer.html">Open the interactive viewer</a>
     <a href="data/merged_10s.csv" download>Download the merged CSV</a>
+    <a href="real/">The same detector on real data &rarr;</a>
     <a href="{repo}">Source on GitHub</a>
   </div>
 

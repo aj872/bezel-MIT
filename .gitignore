@@ -8,7 +8,8 @@ __pycache__/
 *.pyc
 .DS_Store
 
-# Live capture stays local -- real recordings are not committed.
+# The raw Pulsoid export stays local. Its derived 10 s grid under data/real/
+# IS committed on purpose -- docs/real/ is built from it.
 pulsoid-report-*.csv
 
 # Live capture lands in data/ as .jsonl/.db and is ignored by the patterns

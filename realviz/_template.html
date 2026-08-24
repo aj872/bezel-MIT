@@ -1,0 +1,878 @@
+<meta charset="utf-8">
+<title>bezel · real</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f2f4f6; --panel:#fbfcfd; --line:#dde3e9; --line-soft:#e9eef2;
+  --ink:#0f1519; --ink-2:#4a5964; --ink-3:#8697a3;
+  --real:#d8383c; --walk:#2a78d6; --stress:#eb6834; --ghost:#b0868a;
+  --ok:#1baf7a; --warn:#eda100;
+  --b-onset:rgba(235,104,52,.17); --b-sust:rgba(237,161,0,.13);
+  --b-move:rgba(42,120,214,.11); --b-neg:rgba(27,175,122,.12);
+  --b-rec:rgba(134,151,163,.09);
+  --k-onset:#eb6834; --k-sust:#eda100; --k-move:#2a78d6;
+  --k-neg:#1baf7a; --k-rec:#b3c0c9;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#0d1114; --panel:#141a1f; --line:#26313a; --line-soft:#1d252c;
+  --ink:#eef3f6; --ink-2:#9fb0bc; --ink-3:#687986;
+  --real:#e66767; --walk:#3987e5; --stress:#e0632f; --ghost:#7d5b5e;
+  --ok:#199e70; --warn:#c98500;
+  --b-onset:rgba(217,89,38,.22); --b-sust:rgba(201,133,0,.16);
+  --b-move:rgba(57,135,229,.15); --b-neg:rgba(25,158,112,.16);
+  --b-rec:rgba(104,121,134,.12);
+  --k-onset:#d95926; --k-sust:#c98500; --k-move:#3987e5;
+  --k-neg:#199e70; --k-rec:#4d5b66;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0d1114; --panel:#141a1f; --line:#26313a; --line-soft:#1d252c;
+  --ink:#eef3f6; --ink-2:#9fb0bc; --ink-3:#687986;
+  --real:#e66767; --walk:#3987e5; --stress:#e0632f; --ghost:#7d5b5e;
+  --ok:#199e70; --warn:#c98500;
+  --b-onset:rgba(217,89,38,.22); --b-sust:rgba(201,133,0,.16);
+  --b-move:rgba(57,135,229,.15); --b-neg:rgba(25,158,112,.16);
+  --b-rec:rgba(104,121,134,.12);
+  --k-onset:#d95926; --k-sust:#c98500; --k-move:#3987e5;
+  --k-neg:#199e70; --k-rec:#4d5b66;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:400 15px/1.55 "IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1500px;margin:0 auto;padding:28px 24px 64px}
+h1{
+  font:700 clamp(23px,3.1vw,33px)/1.12 "IBM Plex Sans Condensed","IBM Plex Sans",sans-serif;
+  margin:0 0 7px;letter-spacing:-.014em;text-wrap:balance;
+}
+.sub{color:var(--ink-2);margin:0;font-size:14.5px;max-width:76ch}
+.sub b{color:var(--ink);font-weight:600}
+.eyebrow{
+  font:600 11px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 11px;
+}
+.eyebrow a{color:var(--ink-3)}
+a{color:var(--stress);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:currentColor}
+
+.readout{
+  display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  grid-template-columns:repeat(auto-fit,minmax(146px,1fr));
+  border-radius:3px;overflow:hidden;margin:26px 0 22px;
+}
+.cell{background:var(--panel);padding:13px 15px 14px}
+.cell .k{
+  font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+.cell .v{
+  font:600 27px/1.05 "IBM Plex Sans Condensed",sans-serif;margin-top:7px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+}
+.cell .u{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:3px}
+.cell .n{font-size:11.5px;color:var(--ink-3);margin-top:3px;font-weight:500}
+
+.bar{
+  display:flex;flex-wrap:wrap;gap:11px 26px;align-items:flex-end;
+  background:var(--panel);border:1px solid var(--line);border-radius:3px;
+  padding:14px 17px;margin-bottom:8px;
+}
+.ctl{display:flex;flex-direction:column;gap:5px;min-width:206px}
+.ctl label{
+  font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);
+  display:flex;justify-content:space-between;gap:12px;
+}
+.ctl label b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--stress);height:18px;margin:0}
+input[type=range]:focus-visible{outline:2px solid var(--stress);outline-offset:3px}
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+button{
+  font:500 12px/1 "IBM Plex Sans",sans-serif;color:var(--ink-2);
+  background:var(--bg);border:1px solid var(--line);border-radius:3px;
+  padding:7px 11px;cursor:pointer;transition:.13s border-color,.13s color;
+}
+button:hover{border-color:var(--ink-3);color:var(--ink)}
+button:focus-visible{outline:2px solid var(--stress);outline-offset:2px}
+button.on{border-color:var(--stress);color:var(--stress)}
+.seg{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.seg button{border:0;border-radius:0;border-left:1px solid var(--line);padding:8px 13px;
+  font:500 12px/1 "IBM Plex Mono",monospace}
+.seg button:first-child{border-left:0}
+.seg button.on{background:var(--stress);color:var(--panel)}
+.seg button[data-tr="real"].on{background:var(--real)}
+.seg button[data-tr="walk"].on{background:var(--walk)}
+
+.playbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 13px}
+button.play{
+  font:600 12.5px/1 "IBM Plex Sans",sans-serif;color:var(--panel);
+  background:var(--stress);border-color:var(--stress);padding:9px 16px;min-width:98px;
+}
+button.play:hover{color:var(--panel);border-color:var(--stress);filter:brightness(1.08)}
+.clock{
+  font:500 13px/1 "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+  color:var(--ink-2);display:flex;gap:8px 15px;align-items:center;flex-wrap:wrap;
+}
+.clock b{color:var(--ink);font-weight:600}
+.clock .t{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.clock .grp{display:flex;gap:9px;align-items:center;padding-left:12px;
+  border-left:2px solid var(--line)}
+.clock .lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.clock .fire{font-weight:600}
+.hint{font-size:12.5px;color:var(--ink-3);margin:0 0 18px}
+.hint kbd{
+  font:500 11px "IBM Plex Mono",monospace;background:var(--panel);
+  border:1px solid var(--line);border-radius:3px;padding:1px 5px;
+}
+
+.stack{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--panel)}
+.pan{position:relative;border-bottom:1px solid var(--line-soft)}
+.pan:last-child{border-bottom:0}
+.pan canvas{display:block;width:100%;height:100%;position:absolute;inset:0}
+.pan .base{position:relative}
+.ph{
+  position:absolute;top:9px;left:13px;z-index:3;pointer-events:none;
+  font:600 12px/1.25 "IBM Plex Sans Condensed",sans-serif;letter-spacing:.005em;
+  color:var(--ink);
+}
+.ph em{font-style:normal;font-weight:500;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif}
+#tip{
+  position:fixed;z-index:40;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--panel);border:1px solid var(--line);border-radius:3px;
+  padding:9px 11px;font:500 12px/1.62 "IBM Plex Mono",monospace;
+  font-variant-numeric:tabular-nums;box-shadow:0 6px 22px rgba(0,0,0,.16);
+  min-width:214px;
+}
+#tip .tt{font-weight:600;font-size:12.5px;color:var(--ink);margin-bottom:5px}
+#tip .hd{font:600 10px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;
+  text-transform:uppercase;margin:7px 0 3px}
+#tip .r{display:flex;justify-content:space-between;gap:16px;color:var(--ink-2)}
+#tip .r b{color:var(--ink);font-weight:600}
+#tip .vd{font-weight:600;margin-top:2px}
+
+.legend{display:flex;flex-wrap:wrap;gap:7px 18px;margin:14px 0 0;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:flex;align-items:center;gap:7px}
+.sw{width:19px;height:10px;border-radius:2px;flex:none}
+.sw.ln{height:3px;border-radius:2px}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:9px}
+th{
+  text-align:left;font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);padding:0 10px 9px;border-bottom:1px solid var(--line);
+}
+th.n,td.n{text-align:right}
+td{padding:9px 10px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:0}
+tbody tr[data-s]{cursor:pointer}
+tbody tr[data-s]:hover td{background:var(--bg)}
+.tag{
+  display:inline-block;font:600 10.5px/1 "IBM Plex Mono",monospace;
+  padding:4px 7px;border-radius:2px;letter-spacing:.05em;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:34px;align-items:start}
+.grid3{display:grid;grid-template-columns:1.2fr 1fr;gap:22px;margin-top:22px;align-items:start}
+@media (max-width:980px){.grid2,.grid3{grid-template-columns:1fr}.jump{margin-left:0}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:16px 17px 14px}
+.card h2{font:600 14px/1.2 "IBM Plex Sans Condensed",sans-serif;margin:0 0 3px;
+  display:flex;align-items:center;gap:8px}
+.card p{margin:0 0 10px;font-size:12.5px;color:var(--ink-2)}
+.chip{font:600 9.5px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;
+  text-transform:uppercase;padding:4px 6px;border-radius:2px;color:var(--panel)}
+.chip.r{background:var(--real)} .chip.w{background:var(--walk)}
+.formula{
+  font:500 13px/1.85 "IBM Plex Mono",monospace;background:var(--bg);
+  border:1px solid var(--line);border-radius:3px;padding:12px 14px;margin:0 0 12px;
+  color:var(--ink-2);overflow-x:auto;
+}
+.formula b{color:var(--ink);font-weight:600}
+.note{font-size:12.5px;color:var(--ink-2);margin:0 0 11px;padding-left:12px;border-left:2px solid var(--line)}
+.note:last-child{margin-bottom:0}
+.note b{color:var(--ink);font-weight:600}
+.note.warn{border-left-color:var(--warn)}
+.dl{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.dl a{font:500 11.5px/1 "IBM Plex Mono",monospace;border:1px solid var(--line);
+  border-radius:3px;padding:7px 10px;color:var(--ink-2)}
+.dl a:hover{border-color:var(--ink-3);color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">bezel &middot; <a href="../">synthetic day &rarr;</a></p>
+  <h1>Real heart rate, and the walk it cannot rule out</h1>
+  <p class="sub">Left panel of every trace is <b>real</b>: __HOURS__ h of Pulsoid heart rate,
+  __RAW__ raw samples, __DATE__. Beside it, on the same clock and the same grid,
+  a <b>synthetic walking session</b> carrying the step channel the real recording does not have.
+  The real track is scored with the movement gate <b>assumed open</b>, because there is nothing to
+  close it with. The synthetic one shows what that assumption costs.</p>
+
+  <div class="readout" id="readout"></div>
+
+  <div class="bar">
+    <div class="ctl">
+      <label for="a">&alpha; &middot; stillness gate (cadence &lt; &alpha;) <b><span id="av"></span> steps/min</b></label>
+      <input type="range" id="a" min="0" max="220" step="1">
+    </div>
+    <div class="ctl">
+      <label for="b">&beta; &middot; HR climb <b><span id="bv"></span> bpm/min</b></label>
+      <input type="range" id="b" min="1" max="24" step="0.25">
+    </div>
+    <div class="ctl" style="min-width:158px">
+      <label for="d">debounce <b><span id="dv"></span></b></label>
+      <input type="range" id="d" min="1" max="8" step="1">
+    </div>
+    <div class="jump" id="jump"></div>
+  </div>
+  <div class="playbar">
+    <button class="play" id="play">&#9654;&nbsp; Play</button>
+    <div class="seg" id="speeds"></div>
+    <div class="seg" id="tracks"></div>
+    <div class="clock" id="clock"></div>
+  </div>
+  <p class="hint">Drag across any trace to zoom &middot; <kbd>double-click</kbd> to reset &middot;
+    hover for a readout &middot; <kbd>space</kbd> plays</p>
+
+  <div class="stack" id="stack"></div>
+  <div class="legend" id="legend"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2><span class="chip r">real</span> Episodes found in the Pulsoid recording</h2>
+      <p>Gate assumed open, so every unexplained climb is charged as stress.
+         This is an upper bound. Click a row to zoom to it.</p>
+      <table><thead><tr>
+        <th>start</th><th>dur</th><th class="n">peak</th>
+        <th class="n">dHR/dt</th><th class="n">&Delta;HR</th>
+      </tr></thead><tbody id="eps-real"></tbody></table>
+    </div>
+    <div class="card">
+      <h2><span class="chip w">synthetic</span> Episodes found in the walk</h2>
+      <p>Same &beta;, but a real step channel, so the gate can shut.
+         Ground truth is known here, which is the only reason it can be scored.</p>
+      <table><thead><tr>
+        <th>start</th><th>dur</th><th class="n">peak</th>
+        <th class="n">dHR/dt</th><th>ground truth</th>
+      </tr></thead><tbody id="eps-walk"></tbody></table>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <h2>What the gate is worth</h2>
+      <p>The same synthetic walk, scored twice: once with its step channel, once
+         with the gate forced open the way the real track has to be scored.</p>
+      <table><thead><tr><th></th><th class="n">episodes</th><th class="n">stress load</th>
+        <th class="n">false pos.</th></tr></thead>
+        <tbody id="gate-cmp"></tbody></table>
+      <p class="note" style="margin-top:13px">Every one of those extra episodes is a
+        walk. Nothing about the heart rate alone distinguishes them from the real
+        recording's climbs &mdash; which is the honest answer to what
+        <b>__REAL_EPS__ episodes</b> in the Pulsoid file are worth without a second signal.</p>
+    </div>
+    <div class="card">
+      <h2>The rule, and where &beta; came from</h2>
+      <div class="formula">
+        S = cumulative steps, so <b>dS/dt is cadence</b><br><br>
+        if  <b>dS/dt &lt; &alpha;</b>   &nbsp;movement cannot explain it<br>
+        and <b>dHR/dt &gt; &beta;</b>   &nbsp;but heart rate is climbing<br>
+        &rarr; <b>stress score &prop; dHR/dt</b>
+      </div>
+      <p class="note"><b>&beta; = __BETA__ bpm/min.</b> Measured, not chosen. The real
+        recording's own dHR/dt floor is __NF_MED__ &plusmn; __NF_SIG__ bpm/min using a
+        median-absolute-deviation &sigma;, which ignores the genuine climbs instead of
+        being inflated by them. &beta; sits at __BSIG__&sigma;.</p>
+      <p class="note warn"><b>__ARTIFACTS__ samples were dropped before any of this.</b>
+        The optical sensor locked onto the second harmonic four times and reported
+        exactly double &mdash; 70&nbsp;&rarr;&nbsp;136 bpm inside one 4-second sample.
+        Left in, the largest &ldquo;stress onset&rdquo; in the file would be a glitch.</p>
+      <p class="note"><b>__ABSTAIN__% of the real record is abstained on.</b>
+        Dropouts under 30 s are bridged; longer ones are not, and the detector
+        declines to guess a slope across missing data.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:22px">
+    <h2>Data</h2>
+    <p>Everything this page draws, as CSV. The two <code>*_10s.csv</code> files are inputs;
+       the timelines and episode lists are outputs and should not be fed back in.</p>
+    <div class="dl" id="dl"></div>
+  </div>
+</div>
+<div id="tip"></div>
+
+<script>/*__DATA__*/</script>
+<script>
+"use strict";
+const D = window.REAL, N = D.n;
+const TR = ["real", "walk"];
+const KINDS = {
+  stress_onset:{c:"--b-onset", k:"--k-onset", l:"stress onset", wash:1},
+  stress_sustained:{c:"--b-sust", k:"--k-sust", l:"stress sustained", wash:1},
+  activity:{c:"--b-move", k:"--k-move", l:"walking"},
+  negative_control:{c:"--b-neg", k:"--k-neg", l:"negative control"},
+  recovery:{c:"--b-rec", k:"--k-rec", l:"recovery"},
+};
+const RIB = 6;   // px. height of the ground-truth ribbon at the top of a panel
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const clamp = (v,a,b) => v<a?a:v>b?b:v;
+const pad2 = v => String(v).padStart(2,"0");
+const hhmm = i => {
+  const s = D.t0s + i*D.dt, h=((s/3600)|0)%24, m=((s%3600)/60)|0, ss=s%60;
+  return `${pad2(h)}:${pad2(m)}:${pad2(ss)}`;
+};
+
+// ---- detection, re-run on every parameter change -------------------------
+// mirrors realviz/detect.py exactly; smoothing and dHR/dt are precomputed
+// there because they do not depend on alpha or beta.
+let P = {...D.defaults};
+let show = {real:true, walk:true};
+let R = {};
+
+function runTrack(T, gated, alpha, beta, debounce){
+  const raw = new Uint8Array(N), score = new Float32Array(N);
+  for (let i=0;i<N;i++){
+    const still = gated ? (T.cad[i]!=null && T.cad[i] < alpha) : true;
+    raw[i] = (T.valid[i] && still && T.dhr[i]!=null && T.dhr[i] > beta) ? 1 : 0;
+  }
+  const fired = new Uint8Array(N);
+  for (let i=0;i<N;i++){
+    let ok = raw[i];
+    for (let k=1;k<debounce && ok;k++) ok = (i-k>=0) ? raw[i-k] : 0;
+    fired[i] = ok;
+  }
+  const f = fired.slice();
+  for (let i=0;i<N;i++) for (let k=1;k<debounce;k++) if (i+k<N && fired[i+k]) f[i]=1;
+  for (let i=0;i<N;i++) score[i] = f[i] ? clamp(T.dhr[i]/P.scale*100,0,100) : 0;
+
+  const eps=[]; let st=-1, last=-1;
+  for (let i=0;i<N;i++){
+    if (f[i]){ if(st<0) st=i; last=i; }
+    else if (st>=0 && i-last>6){ eps.push([st,last]); st=-1; }
+  }
+  if (st>=0) eps.push([st,last]);
+
+  let load=0, peak=0, mins=0;
+  for(let i=0;i<N;i++){ load+=score[i]; if(score[i]>peak)peak=score[i]; if(f[i])mins++; }
+  return {fired:f, score, eps, load:load*D.dt/60, peak, minutes:mins*D.dt/60};
+}
+
+function detect(){
+  const {alpha,beta,debounce} = P;
+  R.real = runTrack(D.real, false, alpha, beta, debounce);
+  R.walk = runTrack(D.walk, true,  alpha, beta, debounce);
+  R.walkUngated = runTrack(D.walk, false, alpha, beta, debounce);
+
+  // scoring against the synthetic answer key. stress_sustained is excluded:
+  // elevated-but-flat is invisible to a derivative detector by construction.
+  const kind = new Array(N).fill("baseline");
+  for (const e of D.events) for (let i=e.s;i<e.e && i<N;i++) kind[i]=e.k;
+  R.kind = kind;
+  const tally = res => {
+    let tp=0,fp=0,fn=0,fpw=0,fpn=0;
+    for (let i=0;i<N;i++){
+      if (kind[i]==="stress_sustained") continue;
+      const t = kind[i]==="stress_onset";
+      if (res.fired[i] && t) tp++; else if (res.fired[i]) fp++; else if (t) fn++;
+      if (res.fired[i] && kind[i]==="activity") fpw++;
+      if (res.fired[i] && kind[i]==="negative_control") fpn++;
+    }
+    const prec = tp+fp ? tp/(tp+fp) : NaN, rec = tp+fn ? tp/(tp+fn) : NaN;
+    const onsets = D.events.filter(e=>e.k==="stress_onset");
+    const hit = onsets.filter(e=>{for(let i=e.s;i<e.e;i++) if(res.fired[i]) return true; return false;});
+    return {tp,fp,fn,prec,rec,f1:2*prec*rec/(prec+rec),fpw,fpn,
+            hits:hit.length, nOnset:onsets.length};
+  };
+  R.walkStats = tally(R.walk);
+  R.ungStats  = tally(R.walkUngated);
+}
+
+// ---- panels --------------------------------------------------------------
+let view = [0, N-1];
+const PANELS = [
+  {id:"cad", h:110, title:"dS/dt", sub:"cadence &mdash; synthetic only, the real recording has no step channel", unit:"spm"},
+  {id:"hr",  h:210, title:"Heart rate", sub:"real Pulsoid vs synthetic walk, same clock", unit:"bpm"},
+  {id:"dhr", h:178, title:"dHR/dt", sub:"60 s Savitzky-Golay window", unit:"bpm/min"},
+  {id:"sc",  h:158, title:"Stress score", sub:"&prop; dHR/dt, gated on stillness where a gate exists", unit:"score"},
+];
+const PAD = {l:56, r:14, t:30, b:22};
+const stack = document.getElementById("stack");
+for (const p of PANELS){
+  const d = document.createElement("div");
+  d.className = "pan"; d.style.height = p.h+"px";
+  d.innerHTML = `<div class="ph">${p.title} <em>&nbsp;${p.sub}</em></div>
+    <canvas class="base" id="c-${p.id}"></canvas><canvas class="ov" id="o-${p.id}"></canvas>`;
+  stack.appendChild(d);
+  p.el=d; p.base=d.querySelector(".base"); p.ov=d.querySelector(".ov");
+}
+const dpr = () => Math.min(window.devicePixelRatio||1, 2);
+function fit(c,w,h){ const r=dpr(); c.width=w*r; c.height=h*r;
+  const x=c.getContext("2d"); x.setTransform(r,0,0,r,0,0); return x; }
+
+const viewInts = () => [Math.max(0,Math.floor(view[0])), Math.min(N-1,Math.ceil(view[1]))];
+const X = (i,w) => PAD.l + (i-view[0])/(view[1]-view[0]) * (w-PAD.l-PAD.r);
+const iAt = (px,w) => Math.round(view[0] + (px-PAD.l)/(w-PAD.l-PAD.r)*(view[1]-view[0]));
+
+// which series each panel draws, per track
+function series(pid, tr){
+  const T = D[tr];
+  if (pid==="cad") return tr==="walk" ? T.cad : null;
+  if (pid==="hr")  return T.hrs;
+  if (pid==="dhr") return T.dhr;
+  return R[tr].score;
+}
+
+let yLock=null;
+function yScale(p){
+  if(yLock && yLock[p.id]) return yLock[p.id];
+  const [a,b]=viewInts(); let lo=Infinity, hi=-Infinity;
+  for(const tr of TR){
+    if(!show[tr]) continue;
+    for(const src of [series(p.id,tr), p.id==="hr"?D[tr].hr:null]){
+      if(!src) continue;
+      for(let i=a;i<=b;i++){ const v=src[i];
+        if(v==null||isNaN(v))continue; if(v<lo)lo=v; if(v>hi)hi=v; }
+    }
+  }
+  if(!isFinite(lo)){lo=0;hi=1;}
+  if(p.id==="cad"||p.id==="sc") lo=0;
+  if(p.id==="dhr"){
+    hi=Math.max(hi, P.beta*1.9); lo=Math.min(lo, -P.beta*1.4);
+  }
+  if(p.id==="sc") hi=Math.max(hi,100);
+  const pad=(hi-lo)*0.14||1;
+  return [lo-((p.id==="cad"||p.id==="sc")?0:pad), hi+pad];
+}
+
+function strokeSeries(g,src,Y,a,b,w,dash){
+  g.setLineDash(dash||[]);
+  g.beginPath(); let pen=false;
+  for(let i=a;i<=b;i++){ const v=src[i];
+    if(v==null||isNaN(v)){pen=false;continue;}
+    const x=X(i,w),y=Y(v); pen?g.lineTo(x,y):g.moveTo(x,y); pen=true; }
+  g.stroke(); g.setLineDash([]);
+}
+function fillUnder(g,src,Y,a,b,w,y0){
+  g.beginPath(); g.moveTo(X(a,w),y0);
+  for(let i=a;i<=b;i++) g.lineTo(X(i,w),Y(src[i]||0));
+  g.lineTo(X(b,w),y0); g.closePath(); g.fill();
+}
+function hatch(g,x0,x1,y0,y1,color){
+  g.save(); g.beginPath(); g.rect(x0,y0,x1-x0,y1-y0); g.clip();
+  g.strokeStyle=color; g.globalAlpha=.30; g.lineWidth=1;
+  for(let x=x0-(y1-y0);x<x1+(y1-y0);x+=7){
+    g.beginPath(); g.moveTo(x,y1); g.lineTo(x+(y1-y0),y0); g.stroke(); }
+  g.restore();
+}
+
+function drawBase(p){
+  const w=p.el.clientWidth, h=p.h, g=fit(p.base,w,h);
+  const [a,b]=viewInts();
+  const [lo,hi]=yScale(p), Y=v => h-PAD.b-(v-lo)/(hi-lo)*(h-PAD.t-PAD.b);
+  g.clearRect(0,0,w,h);
+
+  // ground-truth bands belong to the synthetic track only -- the real one has
+  // no answer key, and pretending otherwise is the whole trap this page is about
+  if(show.walk) for(const e of D.events){
+    const K=KINDS[e.k]; if(!K || e.e<view[0] || e.s>view[1]) continue;
+    const x0=X(Math.max(e.s,view[0]),w), x1=X(Math.min(e.e,view[1]+1),w);
+    const bw=Math.max(x1-x0,0.6);
+    if(K.wash){ g.fillStyle=css(K.c); g.fillRect(x0,RIB,bw,h-RIB); }
+    g.fillStyle=css(K.k); g.fillRect(x0,0,bw,RIB);
+  }
+
+  g.strokeStyle=css("--line-soft"); g.fillStyle=css("--ink-3");
+  g.font='500 10px "IBM Plex Mono",monospace'; g.textAlign="right"; g.lineWidth=1;
+  for(let k=0;k<=4;k++){
+    const v=lo+(hi-lo)*k/4, y=Math.round(Y(v))+0.5;
+    g.beginPath(); g.moveTo(PAD.l,y); g.lineTo(w-PAD.r,y); g.stroke();
+    g.fillText(Math.abs(v)>=100?v.toFixed(0):v.toFixed(Math.abs(hi-lo)<6?1:0), PAD.l-8, y+3.4);
+  }
+
+  if(p.id==="cad"){
+    if(show.walk){
+      g.fillStyle=css("--walk"); g.globalAlpha=.85;
+      fillUnder(g,D.walk.cad,Y,a,b,w,Y(0)); g.globalAlpha=1;
+    }
+    if(show.real){
+      hatch(g,PAD.l,w-PAD.r,PAD.t,h-PAD.b,css("--real"));
+      g.fillStyle=css("--real"); g.textAlign="right"; g.globalAlpha=.9;
+      g.font='600 10.5px "IBM Plex Mono",monospace';
+      g.fillText("REAL: NOT MEASURED — GATE ASSUMED OPEN", w-PAD.r-8, PAD.t+11);
+      g.globalAlpha=1;
+    }
+    if(show.walk && P.alpha>0 && P.alpha<hi){
+      const y=Y(P.alpha);
+      g.strokeStyle=css("--ink-2"); g.lineWidth=1.2; g.setLineDash([5,3]);
+      g.beginPath(); g.moveTo(PAD.l,y); g.lineTo(w-PAD.r,y); g.stroke(); g.setLineDash([]);
+      g.fillStyle=css("--ink-2"); g.textAlign="left";
+      g.font='600 10px "IBM Plex Mono",monospace';
+      g.fillText("α "+P.alpha, PAD.l+5, y-4);
+    }
+  }
+
+  if(p.id==="hr"){
+    // dropouts first, underneath everything
+    if(show.real){
+      g.fillStyle=css("--ink-3"); g.globalAlpha=.20;
+      for(let i=a;i<=b;i++) if(!D.real.valid[i])
+        g.fillRect(X(i,w),PAD.t,Math.max(X(i+1,w)-X(i,w),1),h-PAD.t-PAD.b);
+      g.globalAlpha=1;
+    }
+    for(const tr of TR){
+      if(!show[tr]) continue;
+      const col=css(tr==="real"?"--real":"--walk");
+      g.strokeStyle=col; g.globalAlpha=.30; g.lineWidth=1;
+      strokeSeries(g,D[tr].hr,Y,a,b,w);          // raw
+      g.globalAlpha=1; g.lineWidth=2.1; g.lineJoin="round";
+      strokeSeries(g,D[tr].hrs,Y,a,b,w, tr==="walk"?[6,3]:null);   // smoothed
+    }
+    // the masked harmonics, shown rather than quietly deleted
+    if(show.real){
+      g.fillStyle=css("--ghost");
+      for(let i=a;i<=b;i++){ const v=D.real.art[i];
+        if(v==null) continue;
+        const x=X(i,w), y=Y(Math.min(v,hi));
+        g.globalAlpha=.55; g.beginPath(); g.arc(x,y,2.6,0,7); g.fill();
+        g.globalAlpha=.22; g.fillRect(x-.6,y,1.2,Y(lo)-y);
+      }
+      g.globalAlpha=1;
+    }
+  }
+
+  if(p.id==="dhr"){
+    const yb=Y(P.beta);
+    // the two ways a climb gets dismissed, shaded so you can see which is which
+    if(show.walk){
+      g.fillStyle=css("--walk"); g.globalAlpha=.42; g.beginPath(); let pen=false;
+      for(let i=a;i<=b;i++){
+        const kill = D.walk.dhr[i]>P.beta && D.walk.cad[i]>=P.alpha;
+        if(kill){ const x=X(i,w); if(!pen){g.moveTo(x,yb);pen=true;} g.lineTo(x,Y(D.walk.dhr[i])); }
+        else if(pen){ g.lineTo(X(i-1,w),yb); g.closePath(); g.fill(); g.beginPath(); pen=false; }
+      }
+      if(pen){ g.lineTo(X(b,w),yb); g.closePath(); g.fill(); }
+      g.globalAlpha=1;
+    }
+    for(const tr of TR){
+      if(!show[tr]) continue;
+      g.fillStyle=css("--stress"); g.globalAlpha=.60; g.beginPath(); let pen=false;
+      for(let i=a;i<=b;i++){
+        if(R[tr].fired[i]){ const x=X(i,w); if(!pen){g.moveTo(x,yb);pen=true;} g.lineTo(x,Y(D[tr].dhr[i])); }
+        else if(pen){ g.lineTo(X(i-1,w),yb); g.closePath(); g.fill(); g.beginPath(); pen=false; }
+      }
+      if(pen){ g.lineTo(X(b,w),yb); g.closePath(); g.fill(); }
+      g.globalAlpha=1;
+    }
+    g.strokeStyle=css("--line"); g.lineWidth=1;
+    g.beginPath(); g.moveTo(PAD.l,Y(0)); g.lineTo(w-PAD.r,Y(0)); g.stroke();
+    for(const tr of TR){
+      if(!show[tr]) continue;
+      g.strokeStyle=css(tr==="real"?"--real":"--walk"); g.lineWidth=1.6; g.lineJoin="round";
+      strokeSeries(g,D[tr].dhr,Y,a,b,w, tr==="walk"?[6,3]:null);
+    }
+    g.strokeStyle=css("--ink-2"); g.lineWidth=1.2; g.setLineDash([5,3]);
+    g.beginPath(); g.moveTo(PAD.l,yb); g.lineTo(w-PAD.r,yb); g.stroke(); g.setLineDash([]);
+    g.fillStyle=css("--ink-2"); g.textAlign="left";
+    g.font='600 10px "IBM Plex Mono",monospace';
+    g.fillText("β "+P.beta.toFixed(2), PAD.l+6, yb-5);
+  }
+
+  if(p.id==="sc"){
+    for(const tr of TR){
+      if(!show[tr]) continue;
+      g.fillStyle=css(tr==="real"?"--real":"--walk");
+      g.globalAlpha = tr==="real"?.85:.62;
+      fillUnder(g,R[tr].score,Y,a,b,w,Y(0)); g.globalAlpha=1;
+    }
+  }
+
+  if(p===PANELS[PANELS.length-1]){
+    g.fillStyle=css("--ink-3"); g.textAlign="center";
+    g.font='500 10px "IBM Plex Mono",monospace';
+    const span=view[1]-view[0], step= span>1800?360 : span>600?180 : span>200?60 : 30;
+    for(let i=Math.ceil(view[0]/step)*step;i<=view[1];i+=step)
+      g.fillText(hhmm(i).slice(0,5), X(i,w), h-5);
+  }
+}
+function drawAll(){ for(const p of PANELS) drawBase(p); }
+
+// ---- crosshair -----------------------------------------------------------
+const tip=document.getElementById("tip");
+function drawOv(idx){
+  for(const p of PANELS){
+    const w=p.el.clientWidth,h=p.h,g=fit(p.ov,w,h); g.clearRect(0,0,w,h);
+    if(idx==null) continue;
+    const x=Math.round(X(idx,w))+0.5;
+    if(x<PAD.l||x>w-PAD.r) continue;
+    g.strokeStyle=css("--ink-3"); g.lineWidth=1; g.globalAlpha=.65;
+    g.beginPath(); g.moveTo(x,PAD.t-8); g.lineTo(x,h-PAD.b); g.stroke(); g.globalAlpha=1;
+    const [lo,hi]=yScale(p), Y=v=>h-PAD.b-(v-lo)/(hi-lo)*(h-PAD.t-PAD.b);
+    for(const tr of TR){
+      if(!show[tr]) continue;
+      const src=series(p.id,tr); if(!src) continue;
+      const v=src[idx]; if(v==null||isNaN(v)) continue;
+      g.fillStyle=css(tr==="real"?"--real":"--walk");
+      g.strokeStyle=css("--panel"); g.lineWidth=2;
+      g.beginPath(); g.arc(x,Y(v),4.3,0,7); g.fill(); g.stroke();
+    }
+  }
+}
+function verdict(tr,i){
+  const T=D[tr], res=R[tr];
+  if(!T.valid[i]) return ["dropout — abstains","--ink-3"];
+  if(res.fired[i]) return [`STRESS · ${res.score[i].toFixed(0)}`,"--stress"];
+  if(tr==="walk" && T.cad[i]>=P.alpha) return ["moving — explained","--walk"];
+  return ["calm","--ink-3"];
+}
+function block(tr,i){
+  const T=D[tr], name = tr==="real"?"REAL":"SYNTHETIC WALK";
+  const col = tr==="real"?"--real":"--walk";
+  const v = verdict(tr,i);
+  const num = (x,u,d=0) => x==null||isNaN(x) ? "—" : (x>=0&&u==="bpm/min"?"+":"")+x.toFixed(d)+" "+u;
+  return `<div class="hd" style="color:var(${col})">${name}</div>`+
+    (tr==="walk"?`<div class="r"><span>cadence</span><b>${num(T.cad[i],"spm")}</b></div>`:"")+
+    `<div class="r"><span>heart rate</span><b>${num(T.hr[i],"bpm")}</b></div>`+
+    `<div class="r"><span>dHR/dt</span><b>${num(T.dhr[i],"bpm/min",1)}</b></div>`+
+    `<div class="r vd" style="color:var(${v[1]})"><span></span><b style="color:inherit">${v[0]}</b></div>`;
+}
+function showTip(idx,cx,cy){
+  const ev = D.events.find(e=>idx>=e.s&&idx<e.e);
+  let html = `<div class="tt">${hhmm(idx)}</div>`;
+  if(show.real){
+    html += block("real",idx);
+    if(D.real.art[idx]!=null)
+      html += `<div class="r" style="color:var(--ghost)"><span>masked</span><b style="color:var(--ghost)">${D.real.art[idx].toFixed(0)} bpm harmonic</b></div>`;
+  }
+  if(show.walk){
+    html += block("walk",idx);
+    if(ev&&KINDS[ev.k]) html += `<div class="r"><span>truth</span><b>${KINDS[ev.k].l}</b></div>`;
+  }
+  tip.innerHTML = html; tip.style.opacity=1;
+  const r=tip.getBoundingClientRect();
+  tip.style.left = Math.min(cx+16, innerWidth-r.width-10)+"px";
+  tip.style.top  = clamp(cy-r.height/2, 10, innerHeight-r.height-10)+"px";
+}
+
+// ---- interaction ---------------------------------------------------------
+let drag=null;
+stack.addEventListener("pointermove", ev=>{
+  if(play.on) return;
+  const w=PANELS[0].el.clientWidth;
+  const px = ev.clientX - stack.getBoundingClientRect().left;
+  const idx = clamp(iAt(px,w), 0, N-1);
+  if(drag){ drag.b=idx; drawOv(idx); drawSel(); return; }
+  drawOv(idx); showTip(idx,ev.clientX,ev.clientY);
+});
+stack.addEventListener("pointerleave", ()=>{ if(!drag){drawOv(null); tip.style.opacity=0;} });
+stack.addEventListener("pointerdown", ev=>{
+  if(play.on) return;
+  const w=PANELS[0].el.clientWidth;
+  const px=ev.clientX-stack.getBoundingClientRect().left;
+  drag={a:clamp(iAt(px,w),0,N-1),b:null}; tip.style.opacity=0;
+  stack.setPointerCapture(ev.pointerId);
+});
+stack.addEventListener("pointerup", ()=>{
+  if(drag&&drag.b!=null&&Math.abs(drag.b-drag.a)>4){
+    view=[Math.min(drag.a,drag.b),Math.max(drag.a,drag.b)]; yLock=null; drawAll();
+  }
+  drag=null; drawOv(null); markJump();
+});
+stack.addEventListener("dblclick", ()=>{ setPlay(false); zoom(0,N-1); });
+function drawSel(){
+  if(!drag||drag.b==null) return;
+  for(const p of PANELS){
+    const w=p.el.clientWidth,h=p.h,g=p.ov.getContext("2d");
+    const x0=X(Math.min(drag.a,drag.b),w), x1=X(Math.max(drag.a,drag.b),w);
+    g.fillStyle=css("--ink-3"); g.globalAlpha=.16; g.fillRect(x0,0,x1-x0,h); g.globalAlpha=1;
+  }
+}
+function zoom(a,z){ setPlay(false); view=[a,z]; yLock=null; drawAll(); drawOv(null); markJump(); }
+
+// ---- readout, tables, jumps ---------------------------------------------
+const num = (x,d=0) => isNaN(x)||x==null ? "—" : x.toFixed(d);
+function epRows(tr, withTruth){
+  const res=R[tr];
+  if(!res.eps.length) return `<tr><td colspan="5" style="color:var(--ink-3)">no episodes at these thresholds</td></tr>`;
+  return res.eps.map(([s,e])=>{
+    let pk=0,pd=0; for(let i=s;i<=e;i++){ if(res.score[i]>pk)pk=res.score[i]; if(D[tr].dhr[i]>pd)pd=D[tr].dhr[i]; }
+    const h0=D[tr].hrs[s], h1=D[tr].hrs[e];
+    let lastCell;
+    if(withTruth){
+      const mid=(s+e)>>1;
+      const ev=D.events.find(x=>mid>=x.s&&mid<x.e)||D.events.find(x=>s>=x.s&&s<x.e);
+      const good = ev && ev.k.startsWith("stress");
+      lastCell = `<td><span class="tag" style="background:var(${good?"--b-onset":"--b-move"});color:var(${good?"--stress":"--walk"})">${ev&&KINDS[ev.k]?KINDS[ev.k].l:"—"}</span></td>`;
+    } else {
+      const d = (h0!=null&&h1!=null) ? h1-h0 : NaN;
+      lastCell = `<td class="n">${isNaN(d)?"—":(d>=0?"+":"")+d.toFixed(1)}</td>`;
+    }
+    return `<tr data-s="${s}" data-e="${e}"><td>${hhmm(s)}</td>
+      <td>${((e-s+1)*D.dt/60).toFixed(1)}m</td><td class="n"><b>${pk.toFixed(0)}</b></td>
+      <td class="n">${pd.toFixed(1)}</td>${lastCell}</tr>`;
+  }).join("");
+}
+
+function render(){
+  detect();
+  const s=R.walkStats;
+  document.getElementById("readout").innerHTML = [
+    ["real · episodes", R.real.eps.length, "", `${R.real.minutes.toFixed(1)} min flagged`],
+    ["real · stress load", num(R.real.load), "score·min", "upper bound, gate open"],
+    ["real · resting HR", D.ctx.real.resting_bpm, "bpm", `peak ${D.ctx.real.peak_bpm}`],
+    ["walk · episodes", R.walk.eps.length, "", `${R.walkUngated.eps.length} without the gate`],
+    ["walk · precision", num(s.prec,3), "", `${s.fpw} false pos. while walking`],
+    ["walk · recall", num(s.rec,3), "", `${s.hits}/${s.nOnset} onset spans caught`],
+  ].map(([k,v,u,n])=>
+    `<div class="cell"><div class="k">${k}</div><div class="v">${v}${u?`<span class="u">${u}</span>`:""}</div><div class="n">${n}</div></div>`
+  ).join("");
+
+  document.getElementById("eps-real").innerHTML = epRows("real", false);
+  document.getElementById("eps-walk").innerHTML = epRows("walk", true);
+  document.querySelectorAll("tbody tr[data-s]").forEach(tr=>tr.onclick=()=>{
+    const a=+tr.dataset.s, z=+tr.dataset.e, pad=Math.max(36,z-a);
+    zoom(Math.max(0,a-pad), Math.min(N-1,z+pad));
+  });
+
+  document.getElementById("gate-cmp").innerHTML = [
+    ["with step channel", R.walk, R.walkStats, "--walk"],
+    ["gate forced open", R.walkUngated, R.ungStats, "--real"],
+  ].map(([lbl,res,st,col])=>
+    `<tr><td style="color:var(${col});font-weight:600">${lbl}</td>
+     <td class="n">${res.eps.length}</td><td class="n">${num(res.load)}</td>
+     <td class="n">${st.fpw+st.fpn}</td></tr>`).join("");
+
+  drawAll();
+}
+
+const JUMPS = D.jumps;
+document.getElementById("jump").innerHTML =
+  JUMPS.map(([l],i)=>`<button data-j="${i}">${l}</button>`).join("");
+function markJump(){
+  document.querySelectorAll("#jump button").forEach(b=>{
+    const [,a,z]=JUMPS[+b.dataset.j];
+    b.classList.toggle("on", view[0]===a && view[1]===z);
+  });
+}
+document.querySelectorAll("#jump button").forEach(b=>b.onclick=()=>{
+  const [,a,z]=JUMPS[+b.dataset.j]; zoom(a,z);
+});
+
+document.getElementById("legend").innerHTML =
+  `<span><i class="sw ln" style="background:var(--real)"></i>real heart rate (Pulsoid)</span>`+
+  `<span><i class="sw ln" style="background:var(--walk)"></i>synthetic walk</span>`+
+  `<span><i class="sw" style="background:var(--stress)"></i>detected stress</span>`+
+  `<span><i class="sw" style="background:var(--ghost)"></i>masked harmonic artifact</span>`+
+  Object.entries(KINDS).map(([k,v])=>
+    `<span><i class="sw" style="background:var(${v.k});height:6px"></i>${v.l} <em style="color:var(--ink-3);font-style:normal">(synthetic truth)</em></span>`).join("");
+
+document.getElementById("dl").innerHTML =
+  D.files.map(f=>`<a href="data/${f}" download>${f}</a>`).join("");
+
+for(const [id,key,dec] of [["a","alpha",0],["b","beta",2],["d","debounce",0]]){
+  const el=document.getElementById(id), out=document.getElementById(id+"v");
+  el.value=P[key]; out.textContent=P[key].toFixed(dec);
+  el.addEventListener("input",()=>{ P[key]=+el.value; out.textContent=(+el.value).toFixed(dec); render(); });
+}
+document.getElementById("tracks").innerHTML = TR.map(t=>
+  `<button data-tr="${t}" class="on">${t==="real"?"Real":"Walk"}</button>`).join("");
+document.querySelectorAll("#tracks button").forEach(b=>b.onclick=()=>{
+  const t=b.dataset.tr;
+  if(show[t] && !TR.some(o=>o!==t && show[o])) return;   // never hide both
+  show[t]=!show[t]; b.classList.toggle("on",show[t]);
+  yLock=null; if(play.on) lockScales();
+  drawAll(); if(play.on){drawPlayhead(); updateClock();}
+});
+
+// ---- playback ------------------------------------------------------------
+const SPEEDS=[1,10,60,240], WIN=120;      // WIN = 20 min visible while rolling
+let play={on:false, speed:60, ph:0, last:0};
+
+function lockScales(){
+  // freeze the y-scales to the whole recording, so a scrolling window does not
+  // make the axes jump under the trace while it plays
+  const save=view; view=[0,N-1]; yLock=null;
+  const m={}; for(const p of PANELS) m[p.id]=yScale(p);
+  view=save; yLock=m;
+}
+function drawPlayhead(){
+  const i=clamp(Math.round(play.ph),0,N-1);
+  for(const p of PANELS){
+    const w=p.el.clientWidth,h=p.h,g=fit(p.ov,w,h); g.clearRect(0,0,w,h);
+    const x=X(play.ph,w); if(x<PAD.l||x>w-PAD.r) continue;
+    // veil what has not been reached yet, so this reads as playback rather
+    // than as a window that happens to be sliding
+    g.fillStyle=css("--panel"); g.globalAlpha=.74;
+    g.fillRect(x, 0, w-PAD.r-x, h); g.globalAlpha=1;
+    const hot = TR.some(t=>show[t] && R[t].fired[i]);
+    g.strokeStyle=css(hot?"--stress":"--ink-3"); g.lineWidth=hot?2:1.4;
+    g.globalAlpha=.92;
+    g.beginPath(); g.moveTo(x,PAD.t-10); g.lineTo(x,h-PAD.b); g.stroke(); g.globalAlpha=1;
+    const [lo,hi]=yScale(p), Y=v=>h-PAD.b-(v-lo)/(hi-lo)*(h-PAD.t-PAD.b);
+    for(const tr of TR){
+      if(!show[tr]) continue;
+      const src=series(p.id,tr); if(!src) continue;
+      const v=src[i]; if(v==null||isNaN(v)) continue;
+      g.fillStyle=css(tr==="real"?"--real":"--walk");
+      g.strokeStyle=css("--panel"); g.lineWidth=2;
+      g.beginPath(); g.arc(x,Y(v),4.3,0,7); g.fill(); g.stroke();
+    }
+  }
+}
+function updateClock(){
+  const i=clamp(Math.round(play.ph),0,N-1);
+  const grp = tr => {
+    if(!show[tr]) return "";
+    const T=D[tr], col=tr==="real"?"--real":"--walk", v=verdict(tr,i);
+    return `<span class="grp"><span class="lbl" style="color:var(${col})">${tr==="real"?"real":"walk"}</span>`+
+      (tr==="walk"?`<span>${T.cad[i]==null?"—":T.cad[i].toFixed(0)}<b> spm</b></span>`:"")+
+      `<span>${T.hr[i]==null?"—":T.hr[i].toFixed(0)}<b> bpm</b></span>`+
+      `<span>${T.dhr[i]==null?"—":(T.dhr[i]>=0?"+":"")+T.dhr[i].toFixed(1)}<b> bpm/min</b></span>`+
+      `<span class="fire" style="color:var(${v[1]})">${v[0]}</span></span>`;
+  };
+  document.getElementById("clock").innerHTML =
+    `<span class="t">${hhmm(i)}</span>` + grp("real") + grp("walk");
+}
+function tick(ts){
+  if(!play.on) return;
+  if(!play.last) play.last=ts;
+  const dt=Math.min((ts-play.last)/1000, 0.25); play.last=ts;
+  play.ph += dt*play.speed/D.dt;
+  if(play.ph>=N-1){ play.ph=N-1; setPlay(false); drawAll(); drawPlayhead(); updateClock(); return; }
+  let a=play.ph-WIN*0.78, b=play.ph+WIN*0.22;
+  if(a<0){a=0;b=WIN;} if(b>N-1){b=N-1;a=N-1-WIN;}
+  view=[a,b];
+  drawAll(); drawPlayhead(); updateClock();
+  requestAnimationFrame(tick);
+}
+function setPlay(on){
+  play.on=on;
+  const btn=document.getElementById("play");
+  btn.innerHTML = on ? "&#10073;&#10073;&nbsp; Pause" : "&#9654;&nbsp; Play";
+  if(on){
+    if(play.ph>=N-1) play.ph=0;
+    lockScales(); play.last=0; requestAnimationFrame(tick);
+  } else {
+    tip.style.opacity=0;
+  }
+}
+document.getElementById("play").onclick = ()=>setPlay(!play.on);
+document.getElementById("speeds").innerHTML =
+  SPEEDS.map(v=>`<button data-s="${v}" class="${v===play.speed?"on":""}">${v}&times;</button>`).join("");
+document.querySelectorAll("#speeds button").forEach(b=>b.onclick=()=>{
+  play.speed=+b.dataset.s;
+  document.querySelectorAll("#speeds button").forEach(x=>x.classList.toggle("on",x===b));
+});
+addEventListener("keydown", e=>{
+  if(e.code==="Space" && !/^(INPUT|BUTTON)$/.test(e.target.tagName)){
+    e.preventDefault(); setPlay(!play.on);
+  }
+});
+
+addEventListener("resize", ()=>{ if(!play.on) drawAll(); });
+matchMedia("(prefers-color-scheme:dark)").addEventListener("change", drawAll);
+render(); markJump(); updateClock();
+</script>
